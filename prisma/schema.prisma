@@ -3,12 +3,12 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String    @id @default(cuid()) @map("_id") @db.ObjectId
   name          String?
   email         String?   @unique
   emailVerified DateTime?
@@ -19,7 +19,7 @@ model User {
 }
 
 model Account {
-  id                 String  @id @default(cuid())
+  id                 String  @id @default(cuid()) @map("_id") @db.ObjectId
   userId             String
   type               String
   provider           String
@@ -40,11 +40,12 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id @default(cuid()) @map("_id") @db.ObjectId
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -56,12 +57,12 @@ model VerificationToken {
 }
 
 model Expense {
-  id          String   @id @default(cuid())
+  id          String   @id @default(cuid()) @map("_id") @db.ObjectId
   date        DateTime
   amount      Float
   description String
   category    String
   userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
